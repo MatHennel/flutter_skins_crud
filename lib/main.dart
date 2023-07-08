@@ -3,6 +3,7 @@ import 'package:flutter_skins_crud/provider/users.dart';
 import 'package:flutter_skins_crud/routes/app_routes.dart';
 import 'package:flutter_skins_crud/views/user_form.dart';
 import 'package:flutter_skins_crud/views/user_list.dart';
+import 'package:flutter_skins_crud/views/user_login.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -28,7 +29,8 @@ class MyApp extends StatelessWidget {
         ),
         routes: {
           AppRoutes.HOME: (_) => UserList(),
-          AppRoutes.USER_FORM: (_) => UserForm()
+          AppRoutes.USER_FORM: (_) => UserForm(),
+          AppRoutes.USER_LOGIN: (_) => UserLogin(),
         },
       ),
     );
