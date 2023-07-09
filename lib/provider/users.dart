@@ -32,7 +32,9 @@ class UsersProvider with ChangeNotifier {
         (_) => User(
           id: user.id,
           name: user.name,
-          email: user.email,
+          preco: user.preco,
+          arma: user.arma,
+          desgaste: user.desgaste,
           avatarUrl: user.avatarUrl,
         ),
       );
@@ -44,7 +46,9 @@ class UsersProvider with ChangeNotifier {
         () => User(
           id: id,
           name: user.name,
-          email: user.email,
+          preco: user.preco,
+          arma: user.arma,
+          desgaste: user.desgaste,
           avatarUrl: user.avatarUrl,
         ),
       );

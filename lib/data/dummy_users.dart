@@ -4,20 +4,26 @@ import 'package:flutter_skins_crud/models/user.dart';
 const DUMMY_USERS = {
   '1': User(
       id: '1',
-      name: 'Matheus',
-      email: 'matheuus@teste.com ',
+      name: 'Flor de Lotus',
+      preco: '1647.39',
+      arma: 'ak-47',
+      desgaste: '0.00051243',
       avatarUrl:
-          "http://m.gettywallpapers.com/wp-content/uploads/2023/05/Cool-Anime-Pfp-for-instagram.jpg"),
+          "https://arena.rtp.pt/wp-content/uploads/2023/03/wild-lotus-860x507-1.png"),
   '2': User(
       id: '2',
-      name: 'teste',
-      email: 'teste@teste.com ',
+      name: 'Dragon Lore',
+      preco: '1505500.00',
+      arma: 'awp',
+      desgaste: '0.35051243',
       avatarUrl:
-          "http://m.gettywallpapers.com/wp-content/uploads/2023/05/Cool-Anime-Pfp.jpg"),
+          "https://s2-techtudo.glbimg.com/Yt1KyOropQxteSSgbgTlMgXfSxo=/0x0:1280x720/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_08fbf48bc0524877943fe86e43087e7a/internal_photos/bs/2019/Q/C/abgL3mSDWNqZpdoA8jhA/novo-projeto-75-.jpg"),
   '3': User(
       id: '3',
-      name: 'teste2',
-      email: 'teste2@teste.com ',
+      name: 'Ocean Drive',
+      preco: '2239.40',
+      arma: 'deagle',
+      desgaste: '0.08951243',
       avatarUrl:
-          "http://m.gettywallpapers.com/wp-content/uploads/2023/05/Cool-Anime-Pfp-HD.jpg"),
+          "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_deagle_cu_deagle_kitch_light_large.0df9b5246d27786b413642f5fc959f37d8892c3a.png"),
 };
