@@ -42,7 +42,6 @@ class _UserFormState extends State<UserForm> {
     "https://cdn.csgoskins.gg/public/uih/products/aHR0cHM6Ly9zdGVhbWNvbW11bml0eS1hLmFrYW1haWhkLm5ldC9lY29ub215L2ltYWdlLy05YTgxZGxXTHdKMlVVR2NWc19uc1Z0emRPRWR0V3dLR1paTFFIVHhEWjdJNTZLVTBad3dvNE5VWDRvRkpaRUhMYlhINUFwZU80WW1saHhZUWtuQ1J2Q28wNERFVmx4a0tncG90NjIxRkFadDdQX0JkalZXNHRXNGs3LUtnT2ZMUDdMV25uOXU1TVJqamV5UHB0dWoyUXp0XzBKc1lEeW1KTkRBSVE4LU1BN1VfMWkzdy1icGhwTzF2NTZibUhCazd5TWtzV0dkd1VKcTROSTBsZy81MTJ4Mzg0/auto/auto/85/notrim/dc1c776765d65482e1449f1467c633c4.webp",
     "https://cdn.csgoskins.gg/public/uih/products/aHR0cHM6Ly9zdGVhbWNvbW11bml0eS1hLmFrYW1haWhkLm5ldC9lY29ub215L2ltYWdlLy05YTgxZGxXTHdKMlVVR2NWc19uc1Z0emRPRWR0V3dLR1paTFFIVHhEWjdJNTZLVTBad3dvNE5VWDRvRkpaRUhMYlhINUFwZU80WW1saHhZUWtuQ1J2Q28wNERFVmx4a0tncG90NjIxRkFSMTdQTGZZUUpLN2RLNGpZRzBtXzd6TzZfdW1tcEQ3OEFfanVxWm9vbWxqZ1cxcmhZOU1UejFkNGZHZWdJLU4xcUI4d1M1eE9pNjFKUzZ2Y2lmd0NacnV6NWl1eWg1ZnVJSFlBLzUxMngzODQ-/auto/auto/85/notrim/a12806a908c9c0910bdf8c92fb133752.webp",
     "https://cdn.csgoskins.gg/public/uih/products/aHR0cHM6Ly9zdGVhbWNvbW11bml0eS1hLmFrYW1haWhkLm5ldC9lY29ub215L2ltYWdlLy05YTgxZGxXTHdKMlVVR2NWc19uc1Z0emRPRWR0V3dLR1paTFFIVHhEWjdJNTZLVTBad3dvNE5VWDRvRkpaRUhMYlhINUFwZU80WW1saHhZUWtuQ1J2Q28wNERFVmx4a0tncG90NjIxRkFCejdQTGZZUUpLOWRpa2xiLUhudkQ4SjRUZGwzbFc3WXR3M0xERDhOV25qRkRoclVvNU5qXzNjSTZkSUE5dFoxelFyRkxxazdqdWdNSzA3NVdmem5vd3BHQjhzdU96NjJCQS81MTJ4Mzg0/auto/auto/85/notrim/eaaf2c98b00e7bf5285195e16297d345.webp",
-    // Adicione outras URLs de imagens desejadas
   ];
   String selectedAvatarUrl = '';
 
@@ -79,9 +78,7 @@ class _UserFormState extends State<UserForm> {
     if (arguments != null && arguments is User) {
       final user = arguments as User;
       _loadFormData(user);
-    } else {
-      // Lógica para lidar com o caso em que os argumentos não são do tipo User ou são nulos
-    }
+    } else {}
 
     return Scaffold(
       appBar: AppBar(
@@ -158,7 +155,7 @@ class _UserFormState extends State<UserForm> {
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 10),
                 child: Text(
-                  'Selecione um avatar:',
+                  'Selecione a foto da skin:',
                   style: TextStyle(fontSize: 16),
                 ),
               ),
@@ -177,7 +174,11 @@ class _UserFormState extends State<UserForm> {
                     ),
                   ),
                   child: selectedAvatarUrl.isNotEmpty
-                      ? Image.network(selectedAvatarUrl)
+                      ? Image.network(
+                          selectedAvatarUrl,
+                          height: 200,
+                          width: 500,
+                        )
                       : Icon(
                           Icons.image,
                           size: 60,

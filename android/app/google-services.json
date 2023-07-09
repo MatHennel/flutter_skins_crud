@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "410211543449",
+    "project_id": "flutter-skins-crud",
+    "storage_bucket": "flutter-skins-crud.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:410211543449:android:e035c0624ccac800de4b08",
+        "android_client_info": {
+          "package_name": "com.example.flutter_skins_crud"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "410211543449-fr8isso1tkd8a5vnmofq7i3cd344284i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDx8jVFOOw8bN-uePgvn8Vy6IdUWCRaYLA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "410211543449-fr8isso1tkd8a5vnmofq7i3cd344284i.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "410211543449-frjj4s0g900ghhqinpdjqddtkhvtgqld.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.flutterSkinsCrud"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
