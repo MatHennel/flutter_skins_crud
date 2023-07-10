@@ -1,13 +1,17 @@
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_skins_crud/data/dummy_users.dart';
-import 'package:flutter_skins_crud/models/user.dart';
+import 'package:flutter_skins_crud/models/skin.dart';
+import 'package:uuid/uuid.dart';
 
 class UsersProvider with ChangeNotifier {
-  final Map<String, User> _items = {...DUMMY_USERS};
+  Map<String, Skin> _items = {...DUMMY_USERS};
+  List<Skin> lista = [];
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  List<User> get all {
+  List<Skin> get all {
     return [..._items.values];
   }
 
@@ -15,52 +19,89 @@ class UsersProvider with ChangeNotifier {
     return _items.length;
   }
 
-  User byIndex(int i) {
+  Skin byIndex(int i) {
+    refresh();
+    notifyListeners();
     return _items.values.elementAt(i);
   }
 
-  void put(User user) {
-    if (user == null) {
+  void put(Skin skin) {
+    if (skin == null) {
       return;
     }
 
-    if (user.id != null &&
-        user.id!.trim().isNotEmpty &&
-        _items.containsKey(user.id)) {
+    if (skin.id != null &&
+        skin.id!.trim().isNotEmpty &&
+        _items.containsKey(skin.id)) {
       _items.update(
-        user.id.toString(),
-        (_) => User(
-          id: user.id,
-          name: user.name,
-          preco: user.preco,
-          arma: user.arma,
-          desgaste: user.desgaste,
-          avatarUrl: user.avatarUrl,
+        skin.id.toString(),
+        (_) => Skin(
+          id: skin.id,
+          name: skin.name,
+          preco: skin.preco,
+          arma: skin.arma,
+          desgaste: skin.desgaste,
+          avatarUrl: skin.avatarUrl,
         ),
       );
     } else {
-      final id = Random().nextDouble().toString();
+      refresh();
+      final id = const Uuid().v1();
 
       _items.putIfAbsent(
         id,
-        () => User(
+        () => Skin(
           id: id,
-          name: user.name,
-          preco: user.preco,
-          arma: user.arma,
-          desgaste: user.desgaste,
-          avatarUrl: user.avatarUrl,
+          name: skin.name,
+          preco: skin.preco,
+          arma: skin.arma,
+          desgaste: skin.desgaste,
+          avatarUrl: skin.avatarUrl,
         ),
       );
     }
+
+    // Enviar para o Firestore
+    firestore.collection("lista_skins").doc("skins").set(
+        {"data": _items.map((key, value) => MapEntry(key, value.toMap()))});
 
     notifyListeners();
   }
 
-  void remove(User user) {
-    if (user.id != null) {
-      _items.remove(user.id);
+  void remove(Skin skin) {
+    if (skin.id != null) {
+      _items.remove(skin.id);
       notifyListeners();
+
+      firestore
+          .collection("lista_skins")
+          .doc("skins")
+          .collection("data")
+          .doc(skin.id)
+          .delete();
     }
+  }
+
+  void refresh() async {
+    List<Skin> temp = [];
+
+    QuerySnapshot<Map<String, dynamic>> snapshot = await firestore
+        .collection("lista_skins")
+        .doc("skins")
+        .collection("data")
+        .get();
+
+    if (snapshot.docs.isNotEmpty) {
+      for (var doc in snapshot.docs) {
+        temp.add(Skin.fromMap(doc.data()));
+      }
+    }
+
+    _items =
+        Map.fromIterable(temp, key: (skin) => skin.id) as Map<String, Skin>;
+
+    lista = List.from(temp);
+
+    notifyListeners();
   }
 }

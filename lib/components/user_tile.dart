@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_skins_crud/provider/users.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_skins_crud/views/user_list.dart';
 
-import '../models/user.dart';
+import '../models/skin.dart';
 import '../routes/app_routes.dart';
+import '../services/crud_services.dart';
 
 class UserImageScreen extends StatelessWidget {
   final String imageUrl;
@@ -29,17 +31,18 @@ class UserImageScreen extends StatelessWidget {
 }
 
 class UserTile extends StatelessWidget {
-  final User user;
+  final Skin skin;
+  CrudService crudService = CrudService();
 
-  const UserTile(this.user);
+  UserTile(this.skin);
 
   @override
   Widget build(BuildContext context) {
-    final avatar = user.avatarUrl == null || user.avatarUrl.isEmpty
+    final avatar = skin.avatarUrl == null || skin.avatarUrl.isEmpty
         ? CircleAvatar(child: Icon(Icons.person))
         : Hero(
-            tag: user.avatarUrl,
-            child: CircleAvatar(backgroundImage: NetworkImage(user.avatarUrl)),
+            tag: skin.avatarUrl,
+            child: CircleAvatar(backgroundImage: NetworkImage(skin.avatarUrl)),
           );
 
     return ListTile(
@@ -48,32 +51,32 @@ class UserTile extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => UserImageScreen(imageUrl: user.avatarUrl),
+              builder: (context) => UserImageScreen(imageUrl: skin.avatarUrl),
             ),
           );
         },
         child: avatar,
       ),
-      title: Text(user.name),
+      title: Text(skin.name),
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Text('Arma: '),
-              Text(user.arma),
+              Text(skin.arma),
             ],
           ),
           Row(
             children: [
               Text('Preço: '),
-              Text('R\$ ' + user.preco.toString()),
+              Text('R\$ ' + skin.preco.toString()),
             ],
           ),
           Row(
             children: [
               Text('Desgaste: '),
-              Text(user.desgaste),
+              Text(skin.desgaste),
             ],
           ),
         ],
@@ -86,7 +89,7 @@ class UserTile extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).pushNamed(
                   AppRoutes.USER_FORM,
-                  arguments: user,
+                  arguments: skin,
                 );
               },
               icon: Icon(Icons.edit),
@@ -109,8 +112,8 @@ class UserTile extends StatelessWidget {
                       TextButton(
                         child: Text('Sim'),
                         onPressed: () {
-                          Provider.of<UsersProvider>(context, listen: false)
-                              .remove(user);
+                          crudService.remove(skin);
+
                           Navigator.of(context).pop();
                         },
                       ),

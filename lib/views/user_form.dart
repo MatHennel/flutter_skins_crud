@@ -1,9 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_skins_crud/models/user.dart';
-import 'package:flutter_skins_crud/provider/users.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_skins_crud/models/skin.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_skins_crud/components/skin_list.dart';
+import 'package:flutter_skins_crud/services/crud_services.dart';
+import 'package:uuid/uuid.dart';
 
 class UserForm extends StatefulWidget {
   @override
@@ -11,9 +13,18 @@ class UserForm extends StatefulWidget {
 }
 
 class _UserFormState extends State<UserForm> {
+  CrudService crudService = CrudService();
   final _form = GlobalKey<FormState>();
   final Map<String, String> _formDATA = {};
+  TextEditingController idControler = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController precoController = TextEditingController();
+  TextEditingController armaController = TextEditingController();
+  TextEditingController desgasteController = TextEditingController();
+  TextEditingController avatarUrlController = TextEditingController();
+
   List<String> avatarUrls = [
+    "",
     "https://arena.rtp.pt/wp-content/uploads/2023/03/wild-lotus-860x507-1.png",
     "https://s2-techtudo.glbimg.com/Yt1KyOropQxteSSgbgTlMgXfSxo=/0x0:1280x720/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_08fbf48bc0524877943fe86e43087e7a/internal_photos/bs/2019/Q/C/abgL3mSDWNqZpdoA8jhA/novo-projeto-75-.jpg",
     "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_deagle_cu_deagle_kitch_light_large.0df9b5246d27786b413642f5fc959f37d8892c3a.png",
@@ -45,14 +56,14 @@ class _UserFormState extends State<UserForm> {
   ];
   String selectedAvatarUrl = '';
 
-  void _loadFormData(User user) {
-    if (user != null) {
-      _formDATA['id'] = user.id!;
-      _formDATA['name'] = user.name;
-      _formDATA['preco'] = user.preco;
-      _formDATA['arma'] = user.arma;
-      _formDATA['desgaste'] = user.desgaste;
-      _formDATA['avatarUrl'] = user.avatarUrl;
+  void _loadFormData(Skin skin) {
+    if (skin != null) {
+      idControler.text = skin.id!;
+      nameController.text = skin.name;
+      precoController.text = skin.preco;
+      armaController.text = skin.arma;
+      desgasteController.text = skin.desgaste;
+      avatarUrlController.text = skin.avatarUrl;
     }
   }
 
@@ -75,9 +86,9 @@ class _UserFormState extends State<UserForm> {
   @override
   Widget build(BuildContext context) {
     final arguments = ModalRoute.of(context)?.settings.arguments;
-    if (arguments != null && arguments is User) {
-      final user = arguments as User;
-      _loadFormData(user);
+    if (arguments != null && arguments is Skin) {
+      final skin = arguments as Skin;
+      _loadFormData(skin);
     } else {}
 
     return Scaffold(
@@ -87,35 +98,39 @@ class _UserFormState extends State<UserForm> {
         actions: <Widget>[
           IconButton(
             onPressed: () {
-              if (_form.currentState?.validate() == true) {
-                _form.currentState?.save();
+              String id = idControler.text.isNotEmpty
+                  ? idControler.text
+                  : const Uuid().v1();
+              Skin skin = Skin(
+                id: id,
+                name: nameController.text,
+                preco: precoController.text,
+                arma: armaController.text,
+                desgaste: desgasteController.text,
+                avatarUrl: selectedAvatarUrl,
+              );
 
-                Provider.of<UsersProvider>(context, listen: false).put(
-                  User(
-                    id: _formDATA['id'],
-                    name: _formDATA['name']!,
-                    preco: _formDATA['preco']!,
-                    arma: _formDATA['arma']!,
-                    desgaste: _formDATA['desgaste']!,
-                    avatarUrl: selectedAvatarUrl ?? '',
-                  ),
-                );
-                Navigator.of(context).pop();
-              }
+              crudService
+                  .getFireStore()
+                  .collection(crudService.getUid())
+                  .doc(skin.id)
+                  .set(skin.toMap());
+
+              Navigator.pop(context);
             },
-            icon: Icon(Icons.save),
+            icon: const Icon(Icons.save),
           )
         ],
       ),
       body: Padding(
-        padding: EdgeInsets.all(10),
+        padding: const EdgeInsets.all(10),
         child: Form(
           key: _form,
           child: Column(
             children: <Widget>[
               TextFormField(
-                initialValue: _formDATA['name'],
-                decoration: InputDecoration(labelText: 'Nome'),
+                controller: nameController,
+                decoration: const InputDecoration(labelText: 'Nome'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Por favor, digite o nome.';
@@ -125,9 +140,10 @@ class _UserFormState extends State<UserForm> {
                 onSaved: (value) => _formDATA['name'] = value!,
               ),
               TextFormField(
-                initialValue: _formDATA['preco'],
-                decoration: InputDecoration(labelText: 'Preço'),
-                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                controller: precoController,
+                decoration: const InputDecoration(labelText: 'Preço'),
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(
                       RegExp(r'^\d+([\.]\d{0,2})?'))
@@ -136,14 +152,14 @@ class _UserFormState extends State<UserForm> {
                   if (value == null || value.isEmpty) {
                     return 'Por favor, digite o preço.';
                   }
-                  // Adicione validações adicionais, se necessário
+
                   return null;
                 },
                 onSaved: (value) => _formDATA['preco'] = value!,
               ),
               TextFormField(
-                initialValue: _formDATA['arma'],
-                decoration: InputDecoration(labelText: 'Arma'),
+                controller: armaController,
+                decoration: const InputDecoration(labelText: 'Arma'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Por favor, digite a arma.';
@@ -152,7 +168,7 @@ class _UserFormState extends State<UserForm> {
                 },
                 onSaved: (value) => _formDATA['arma'] = value!,
               ),
-              Padding(
+              const Padding(
                 padding: EdgeInsets.symmetric(vertical: 10),
                 child: Text(
                   'Selecione a foto da skin:',
@@ -179,7 +195,7 @@ class _UserFormState extends State<UserForm> {
                           height: 200,
                           width: 500,
                         )
-                      : Icon(
+                      : const Icon(
                           Icons.image,
                           size: 60,
                           color: Colors.grey,
@@ -187,8 +203,8 @@ class _UserFormState extends State<UserForm> {
                 ),
               ),
               TextFormField(
-                initialValue: _formDATA['desgaste'],
-                decoration: InputDecoration(labelText: 'Desgaste'),
+                controller: desgasteController,
+                decoration: const InputDecoration(labelText: 'Desgaste'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Por favor, digite o desgaste.';
